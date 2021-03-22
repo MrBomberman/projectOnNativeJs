@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev" : "--mode development"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +25,9 @@
     "webpack-stream": "^5.2.1"
   },
   "dependencies": {
-    "npm": "^7.6.3"
+    "gulp-cli": "^2.3.0",
+    "jquery": "^3.6.0",
+    "npm": "^7.6.3",
+    "slick-carousel": "^1.8.1"
   }
 }
