@@ -3,6 +3,7 @@ function modalWindow() {
 
         const btnCall = document.querySelectorAll(btnSelector);
         const modal = document.querySelector(modalSelector);
+        const close = document.querySelector(closeModalSelector);
 
         btnCall.forEach(btn => {
             btn.addEventListener('click', () => { // на несколько одинаковых элементов вешаем одну функцию
@@ -21,14 +22,17 @@ function modalWindow() {
             modal.classList.remove('show');
             document.body.style.overflow = '';
         }
-    
+        
+        close.addEventListener('click', () => {
+            closeModal();
+        })
     
     
         modal.addEventListener('click', (e) => { // обязательно следует передать событие
-            if (e.target === modal || e.target.matches(closeModalSelector) == '') { // e.taget - то , куда кликнул пользователь, отслеживает
+            if (e.target === modal) { // e.taget - то , куда кликнул пользователь, отслеживает
             // если элемент, куда мы кликнули строго равен элементу, который мы показывали - то мы его будем закрывать
             // когда мы кликаем вне окна - объект события и есть все модальное окно, но как только мы кликаем во внутрь модального окна - здесь e.target будет уже один из элементов внутри модального окна, а не оно само
-                closeModal();
+               closeModal();
             }
         });
     
