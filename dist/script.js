@@ -17816,6 +17816,7 @@ document.addEventListener("DOMContentLoaded", function () {
   Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.glazing_slider', '.glazing_block', '.glazing_content', 'active');
   Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.decoration_slider', '.no_click', '.decoration_content > div > div', 'after_click'); // строгое соответствие в селекторе
 
+  Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline-block');
   Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])();
 });
 
@@ -17954,9 +17955,13 @@ __webpack_require__.r(__webpack_exports__);
 
 function modalWindow() {
   function addClassesForModal(btnSelector, modalSelector, closeModalSelector) {
+    var closeClickOverlay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+    // по умолчанию при клике на подложку модалка будет закрываться
     var btnCall = document.querySelectorAll(btnSelector);
     var modal = document.querySelector(modalSelector);
     var close = document.querySelector(closeModalSelector);
+    var windows = document.querySelectorAll('[data-modal]'); // переменная нужна, чтобы получить все модальные окна со страницы
+
     btnCall.forEach(function (btn) {
       btn.addEventListener('click', function () {
         // на несколько одинаковых элементов вешаем одну функцию
@@ -17965,12 +17970,18 @@ function modalWindow() {
     });
 
     function openModal() {
+      windows.forEach(function (item) {
+        item.classList.add('hide'); // когда открывается модальное окно, закрываем все остальные
+      });
       modal.classList.add('show');
       modal.classList.remove('hide');
       document.body.style.overflow = 'hidden'; // чтобы скролилось только модальное окно, а не весь сайт
     }
 
     function closeModal() {
+      windows.forEach(function (item) {
+        item.classList.add('hide'); // когда открывается модальное окно, закрываем все остальные
+      });
       modal.classList.add('hide');
       modal.classList.remove('show');
       document.body.style.overflow = '';
@@ -17981,10 +17992,11 @@ function modalWindow() {
     });
     modal.addEventListener('click', function (e) {
       // обязательно следует передать событие
-      if (e.target === modal) {
+      if (e.target === modal && closeClickOverlay) {
         // e.taget - то , куда кликнул пользователь, отслеживает
         // если элемент, куда мы кликнули строго равен элементу, который мы показывали - то мы его будем закрывать
         // когда мы кликаем вне окна - объект события и есть все модальное окно, но как только мы кликаем во внутрь модального окна - здесь e.target будет уже один из элементов внутри модального окна, а не оно само
+        // если мы кликаем на подложку и параметр клика на подложку = тру, модалка будет закрываться
         closeModal();
       }
     });
@@ -18005,7 +18017,11 @@ function modalWindow() {
   }
 
   addClassesForModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close');
-  addClassesForModal('.phone_link', '.popup', '.popup .popup_close'); // showModalByTime('.popup', 12000)
+  addClassesForModal('.phone_link', '.popup', '.popup .popup_close'); // подвязываем триггер к модальному окну
+
+  addClassesForModal('.popup_calc_btn', '.popup_calc', '.popup_calc_close');
+  addClassesForModal('.popup_calc_button', '.popup_calc_profile', '.popup_calc_profile_close', false);
+  addClassesForModal('.popup_calc_profile_button', '.popup_calc_end', '.popup_calc_end_close', false); // showModalByTime('.popup', 12000)
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (modalWindow);
@@ -18029,6 +18045,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function tabs(headerSelector, tabSelector, contentSelector, activeClass) {
+  var display = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'block';
   var header = document.querySelector(headerSelector); // блок, который объединяет все табы
 
   var tab = document.querySelectorAll(tabSelector); // чтобы поулчить сразу все табы
@@ -18049,7 +18066,7 @@ function tabs(headerSelector, tabSelector, contentSelector, activeClass) {
   function showTabContent() {
     var i = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     // будем показывать по индексу определенный контент
-    content[i].style.display = 'block';
+    content[i].style.display = display;
     tab[i].classList.add(activeClass); // даем класс активности определенному табу
   }
 

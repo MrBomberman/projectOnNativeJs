@@ -1,4 +1,4 @@
-function tabs(headerSelector, tabSelector, contentSelector, activeClass) {
+function tabs(headerSelector, tabSelector, contentSelector, activeClass, display= 'block') {
 
     const header = document.querySelector(headerSelector); // блок, который объединяет все табы
     const tab = document.querySelectorAll(tabSelector); // чтобы поулчить сразу все табы
@@ -16,7 +16,7 @@ function tabs(headerSelector, tabSelector, contentSelector, activeClass) {
     }
 
     function showTabContent(i = 0) { // будем показывать по индексу определенный контент
-        content[i].style.display = 'block'
+        content[i].style.display = display
 
         tab[i].classList.add(activeClass) // даем класс активности определенному табу
     }
