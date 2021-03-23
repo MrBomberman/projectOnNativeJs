@@ -50,7 +50,7 @@ function modalWindow() {
 
     addClassesForModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close')
     addClassesForModal('.phone_link','.popup', '.popup .popup_close' );
-    showModalByTime('.popup', 12000)
+    // showModalByTime('.popup', 12000)
 }
 
 export default modalWindow;
