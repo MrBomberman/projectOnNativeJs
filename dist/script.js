@@ -17806,19 +17806,134 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_modalWindow__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/modalWindow */ "./src/js/modules/modalWindow.js");
 /* harmony import */ var _modules_tabs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
+/* harmony import */ var _modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/changeModalState */ "./src/js/modules/changeModalState.js");
+
 
 
 
 
 document.addEventListener("DOMContentLoaded", function () {
   // назначаем глобальный обработчик событий - наши скрипты будут выполняться, когда наша дом структура на старнцие готова
+  var modalState = {}; // объект с данными для отправки с нескольких модальных окон
+
+  Object(_modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__["default"])(modalState); // постоянно изменяем глобальное состояние
+
   Object(_modules_modalWindow__WEBPACK_IMPORTED_MODULE_1__["default"])();
   Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.glazing_slider', '.glazing_block', '.glazing_content', 'active');
   Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.decoration_slider', '.no_click', '.decoration_content > div > div', 'after_click'); // строгое соответствие в селекторе
 
   Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline-block');
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])();
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(modalState);
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/changeModalState.js":
+/*!********************************************!*\
+  !*** ./src/js/modules/changeModalState.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _checkNumInputs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./checkNumInputs */ "./src/js/modules/checkNumInputs.js");
+
+
+
+function changeModalState(state) {
+  // получаем все элементы, данные которых нам необходимы
+  var windowForm = document.querySelectorAll('.balcon_icons_img'); // форма(окна..)
+
+  var windowWidth = document.querySelectorAll('#width');
+  var windowHeight = document.querySelectorAll('#height'); // получаем высоту окна
+
+  var windowType = document.querySelectorAll('#view_type'); // тип окна
+
+  var windowProfile = document.querySelectorAll('.checkbox');
+  Object(_checkNumInputs__WEBPACK_IMPORTED_MODULE_1__["default"])('#width');
+  Object(_checkNumInputs__WEBPACK_IMPORTED_MODULE_1__["default"])('#height'); // даже если будет всего один элемент в псевдомассиве, forEach все равно правильно отработает
+
+  function bindActionToElements(event, element, prop) {
+    element.forEach(function (item, i) {
+      item.addEventListener(event, function () {
+        switch (item.nodeName) {
+          // вернет имя текущей ноды - тега
+          case 'SPAN':
+            state[prop] = i; // передаем элемент, на который кликнули, в состояние формы, которое в процессе и создали
+
+            break;
+
+          case 'INPUT':
+            if (item.getAttribute('type') === 'checkbox') {
+              // условие выполнится только при клике в чекбокс
+              i === 0 ? state[prop] = 'Cold' : state[prop] = 'Warm'; // проверяем по id элемента, так как их у нас всего два 
+
+              element.forEach(function (box, j) {
+                box.checked = false; // снимаем галочки со всех
+
+                if (i == j) {
+                  // если совпадает по id галочку оставляем
+                  box.checked = true;
+                }
+              }); // перебираем все checkbox проверяя их на наличие галочки, чтобы можно было выбрать только один элемент
+            } else {
+              state[prop] = item.value; // если передает всего один элемент, вытаскиваем из него то, что ввели в поле
+            }
+
+            break;
+
+          case 'SELECT':
+            state[prop] = item.value; // value выбранного текста
+
+            break;
+        }
+
+        console.log(state);
+      });
+    });
+  }
+
+  bindActionToElements('click', windowForm, 'form');
+  bindActionToElements('input', windowWidth, 'width');
+  bindActionToElements('input', windowHeight, 'height');
+  bindActionToElements('change', windowType, 'type');
+  bindActionToElements('change', windowProfile, 'profile');
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (changeModalState);
+
+/***/ }),
+
+/***/ "./src/js/modules/checkNumInputs.js":
+/*!******************************************!*\
+  !*** ./src/js/modules/checkNumInputs.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
+/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+function checkNumInputs(selector) {
+  var numInputs = document.querySelectorAll(selector);
+  numInputs.forEach(function (item) {
+    item.addEventListener('input', function () {
+      // каждый раз, когда пользователь что-то вводит, запускаем функцию
+      item.value = item.value.replace(/\D/, ''); // ищем все не цифры и меняем на пустую строку
+    });
+  });
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (checkNumInputs);
 
 /***/ }),
 
@@ -17837,12 +17952,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var core_js_modules_es_promise_finally__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! core-js/modules/es.promise.finally */ "./node_modules/core-js/modules/es.promise.finally.js");
 /* harmony import */ var core_js_modules_es_promise_finally__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_promise_finally__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.string.replace */ "./node_modules/core-js/modules/es.string.replace.js");
-/* harmony import */ var core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_replace__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
-/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! regenerator-runtime/runtime */ "./node_modules/regenerator-runtime/runtime.js");
+/* harmony import */ var regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(regenerator_runtime_runtime__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _checkNumInputs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./checkNumInputs */ "./src/js/modules/checkNumInputs.js");
 
 
 
@@ -17850,18 +17964,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function forms() {
+function forms(state) {
   var form = document.querySelectorAll('form'); // получаем по тегу
 
-  var inputs = document.querySelectorAll('input');
-  var phoneInputs = document.querySelectorAll('input[name="user_phone"]'); // берем все инпуты телефонных номеров со свойством name
+  var inputs = document.querySelectorAll('input'); // const phoneInputs = document.querySelectorAll('input[name="user_phone"]'); // берем все инпуты телефонных номеров со свойством name
 
-  phoneInputs.forEach(function (item) {
-    item.addEventListener('input', function () {
-      // каждый раз, когда пользователь что-то вводит, запускаем функцию
-      item.value = item.value.replace(/\D/, ''); // ищем все не цифры и меняем на пустую строку
-    });
-  });
+  Object(_checkNumInputs__WEBPACK_IMPORTED_MODULE_5__["default"])('input[name="user_phone"]');
   var message = {
     loading: 'Loading....',
     success: 'Thank you! We will call you as soon as possible',
@@ -17919,7 +18027,15 @@ function forms() {
 
       var formData = new FormData(item); // во внутрь помещаем форму, из которой хотим вытащить все данные
       // объект найдет все инпуты, соберет все данные в специальную структуру и мы ее поместим в переменную
-      // отправляем запрос на сервер с определенными данными
+
+      if (item.getAttribute('[data-calc]') === 'end') {
+        // проверяем та ли форма нам пришла
+        for (var key in state) {
+          // перебираем каждую пару в объекте и помещаем в нашу formData
+          formData.append(key, state[key]); // передаем ключ и его значение
+        }
+      } // отправляем запрос на сервер с определенными данными
+
 
       postData('assets/server.php', formData).then(function (res) {
         console.log(res);
@@ -17972,6 +18088,8 @@ function modalWindow() {
     function openModal() {
       windows.forEach(function (item) {
         item.classList.add('hide'); // когда открывается модальное окно, закрываем все остальные
+
+        item.classList.remove('show');
       });
       modal.classList.add('show');
       modal.classList.remove('hide');
@@ -17981,6 +18099,8 @@ function modalWindow() {
     function closeModal() {
       windows.forEach(function (item) {
         item.classList.add('hide'); // когда открывается модальное окно, закрываем все остальные
+
+        item.classList.remove('show');
       });
       modal.classList.add('hide');
       modal.classList.remove('show');

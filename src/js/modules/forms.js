@@ -1,13 +1,13 @@
-function forms() {
+import checkNumInputs from './checkNumInputs';
+
+function forms(state) {
     const form = document.querySelectorAll('form'); // получаем по тегу
     const inputs = document.querySelectorAll('input');
-    const phoneInputs = document.querySelectorAll('input[name="user_phone"]'); // берем все инпуты телефонных номеров со свойством name
+    // const phoneInputs = document.querySelectorAll('input[name="user_phone"]'); // берем все инпуты телефонных номеров со свойством name
 
-    phoneInputs.forEach(item => {
-        item.addEventListener('input', () => { // каждый раз, когда пользователь что-то вводит, запускаем функцию
-            item.value = item.value.replace(/\D/, '') // ищем все не цифры и меняем на пустую строку
-        })
-    })
+    checkNumInputs('input[name="user_phone"]');
+
+
 
     const message = {
         loading: 'Loading....',
@@ -46,6 +46,13 @@ function forms() {
             // собираем все данные с формы
             const formData = new FormData(item); // во внутрь помещаем форму, из которой хотим вытащить все данные
             // объект найдет все инпуты, соберет все данные в специальную структуру и мы ее поместим в переменную
+
+            if (item.getAttribute('[data-calc]') === 'end') { // проверяем та ли форма нам пришла
+                for (let key in state) { // перебираем каждую пару в объекте и помещаем в нашу formData
+                    formData.append(key, state[key]); // передаем ключ и его значение
+                }
+            }
+
             // отправляем запрос на сервер с определенными данными
             postData('assets/server.php', formData)
                 .then(res => {

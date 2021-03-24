@@ -6,6 +6,8 @@ function modalWindow() {
         const close = document.querySelector(closeModalSelector);
         const windows = document.querySelectorAll('[data-modal]')// переменная нужна, чтобы получить все модальные окна со страницы
 
+
+
         btnCall.forEach(btn => {
             btn.addEventListener('click', () => { // на несколько одинаковых элементов вешаем одну функцию
                 
@@ -17,6 +19,7 @@ function modalWindow() {
         function openModal() {
             windows.forEach(item => {
                 item.classList.add('hide') // когда открывается модальное окно, закрываем все остальные
+                item.classList.remove('show')
             })
             modal.classList.add('show');
             modal.classList.remove('hide');
@@ -26,6 +29,7 @@ function modalWindow() {
         function closeModal() {
             windows.forEach(item => {
                 item.classList.add('hide') // когда открывается модальное окно, закрываем все остальные
+                item.classList.remove('show')
             })
             modal.classList.add('hide');
             modal.classList.remove('show');
