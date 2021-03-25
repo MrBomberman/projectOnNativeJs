@@ -17807,6 +17807,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_tabs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/tabs */ "./src/js/modules/tabs.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
 /* harmony import */ var _modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/changeModalState */ "./src/js/modules/changeModalState.js");
+/* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
+
 
 
 
@@ -17824,6 +17826,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline-block');
   Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(modalState);
+  Object(_modules_timer__WEBPACK_IMPORTED_MODULE_5__["default"])();
 });
 
 /***/ }),
@@ -18214,6 +18217,79 @@ function tabs(headerSelector, tabSelector, contentSelector, activeClass) {
 
 ;
 /* harmony default export */ __webpack_exports__["default"] = (tabs);
+
+/***/ }),
+
+/***/ "./src/js/modules/timer.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/timer.js ***!
+  \*********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function timer() {
+  var deadline = '2021-05-21';
+
+  function getTimeRemaining(endtime) {
+    var t = Date.parse(endtime) - Date.parse(new Date()); // здесь получим кол-во миллисекунд, разницу, которая осталась до дедлайна
+
+    var days = Math.floor(t / (1000 * 60 * 60 * 24)); // находим кол-во дней до дедлайна, округляя число
+
+    var hours = Math.floor(t / 1000 * 60 * 60 % 24); // общее кол-во часов делим на 24 часа и получаем остаток , 
+    // которого не хватает до полных суток
+
+    var minutes = Math.floor(t / 1000 / 60 % 60); // общее кол-во минут делим на 60 минут и получаем остаток
+
+    var seconds = Math.floor(t / 1000 % 60);
+    return {
+      // создаем объект и возвращаем его из функции
+      'total': t,
+      'days': days,
+      'hours': hours,
+      'minutes': minutes,
+      'seconds': seconds
+    };
+  }
+
+  function getZero(num) {
+    if (num >= 0 && num < 10) {
+      return "0".concat(num);
+    } else {
+      return num; // будет добавлять ноль к числу, если оно меньше 10
+    }
+  }
+
+  function setClock(selector, endtime) {
+    // принимает селектор и время дедлайна
+    var timer = document.querySelector(selector);
+    var days = timer.querySelector('#days');
+    var hours = timer.querySelector('#hours');
+    var minutes = timer.querySelector('#minutes');
+    var seconds = timer.querySelector('#seconds');
+    var timeInterval = setInterval(updateClock, 1000);
+    updateClock(); // вызываем первый раз функцию заранее, чтобы не было моргания времени
+
+    function updateClock() {
+      var t = getTimeRemaining(endtime);
+      days.innerHTML = getZero(t.days); // получив объект с разными свойствами обращаемся к каждому свойству объекта поочередно
+      // также записывая это свойство в переменную на странице
+
+      hours.innerHTML = getZero(t.hours);
+      minutes.innerHTML = getZero(t.minutes);
+      seconds.innerHTML = getZero(t.seconds);
+
+      if (t.total <= 0) {
+        clearInterval(timeInterval); // если время уже вышло, то остановить таймер
+      }
+    }
+  }
+
+  setClock('.timer1', deadline);
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (timer);
 
 /***/ }),
 

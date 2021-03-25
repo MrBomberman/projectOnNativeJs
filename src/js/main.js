@@ -3,6 +3,7 @@ import modalWindow from './modules/modalWindow';
 import tabs from './modules/tabs';
 import forms from './modules/forms';
 import changeModalState from './modules/changeModalState';
+import timer from './modules/timer';
 
 document.addEventListener("DOMContentLoaded", () => { // назначаем глобальный обработчик событий - наши скрипты будут выполняться, когда наша дом структура на старнцие готова
     
@@ -13,5 +14,6 @@ document.addEventListener("DOMContentLoaded", () => { // назначаем гл
     tabs('.decoration_slider', '.no_click', '.decoration_content > div > div', 'after_click'); // строгое соответствие в селекторе
     tabs('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline-block')
     forms(modalState);
+    timer();
   });
 
