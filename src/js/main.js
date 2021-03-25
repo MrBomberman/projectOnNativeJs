@@ -4,6 +4,7 @@ import tabs from './modules/tabs';
 import forms from './modules/forms';
 import changeModalState from './modules/changeModalState';
 import timer from './modules/timer';
+import images from "./modules/images";
 
 document.addEventListener("DOMContentLoaded", () => { // назначаем глобальный обработчик событий - наши скрипты будут выполняться, когда наша дом структура на старнцие готова
     
@@ -14,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => { // назначаем гл
     tabs('.decoration_slider', '.no_click', '.decoration_content > div > div', 'after_click'); // строгое соответствие в селекторе
     tabs('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline-block')
     forms(modalState);
-    timer();
+    timer('.timer1','2021-05-21'); // передаем селектор таймера и дедлайн
+    images();
   });
 

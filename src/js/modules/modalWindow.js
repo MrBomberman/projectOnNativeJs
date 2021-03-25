@@ -5,7 +5,7 @@ function modalWindow() {
         const modal = document.querySelector(modalSelector);
         const close = document.querySelector(closeModalSelector);
         const windows = document.querySelectorAll('[data-modal]')// переменная нужна, чтобы получить все модальные окна со страницы
-
+        const scroll = calcScroll();
 
 
         btnCall.forEach(btn => {
@@ -24,7 +24,9 @@ function modalWindow() {
             modal.classList.add('show');
             modal.classList.remove('hide');
             document.body.style.overflow = 'hidden'; // чтобы скролилось только модальное окно, а не весь сайт
+            document.body.style.marginRight = `${scroll}px`;  // передаем нужное кол-во пикселей от скролла для отступа    
         }
+
     
         function closeModal() {
             windows.forEach(item => {
@@ -34,6 +36,7 @@ function modalWindow() {
             modal.classList.add('hide');
             modal.classList.remove('show');
             document.body.style.overflow = '';
+            document.body.style.marginRight = `0px`
         }
         
         close.addEventListener('click', () => {
@@ -66,6 +69,22 @@ function modalWindow() {
             document.body.style.overflow = 'hidden';
         }, time)
     }
+
+    function calcScroll(){ // измеряем кол-во пикселей нашего скролла
+        let div = document.createElement('div');
+        // создаем элемент на странице, добавляем ему прокрутку, затем из общей ширины вычитаем ширину без прокуртки - получаем текущий размер прокрутки нашего скролла на компьютере
+        div.style.width = '50px';
+        div.style.height = '50px';
+        div.style.overflowY = 'scroll'; // делаем скролл по вертикали
+        div.style.visibility = 'hidden'; // делаем его невидимым для пользователя
+
+        document.body.appendChild(div);
+        let scrollWidth = div.offsetWidth - div.clientWidth;
+        div.remove(); // удаляем после вычислений элемент
+
+        return scrollWidth;
+    }
+
 
 
     addClassesForModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close')

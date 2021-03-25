@@ -17808,6 +17808,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
 /* harmony import */ var _modules_changeModalState__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/changeModalState */ "./src/js/modules/changeModalState.js");
 /* harmony import */ var _modules_timer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/timer */ "./src/js/modules/timer.js");
+/* harmony import */ var _modules_images__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/images */ "./src/js/modules/images.js");
+
 
 
 
@@ -17826,7 +17828,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   Object(_modules_tabs__WEBPACK_IMPORTED_MODULE_2__["default"])('.balcon_icons', '.balcon_icons_img', '.big_img > img', 'do_image_more', 'inline-block');
   Object(_modules_forms__WEBPACK_IMPORTED_MODULE_3__["default"])(modalState);
-  Object(_modules_timer__WEBPACK_IMPORTED_MODULE_5__["default"])();
+  Object(_modules_timer__WEBPACK_IMPORTED_MODULE_5__["default"])('.timer1', '2021-05-21'); // передаем селектор таймера и дедлайн
+
+  Object(_modules_images__WEBPACK_IMPORTED_MODULE_6__["default"])();
 });
 
 /***/ }),
@@ -18059,6 +18063,60 @@ function forms(state) {
 
 /***/ }),
 
+/***/ "./src/js/modules/images.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/images.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function images() {
+  var imgPopup = document.createElement('div'); // создаем модальное окно
+
+  var workSection = document.querySelector('.works'); // получаем всю секцию картинок
+
+  var bigImg = document.createElement('img'); // создаем картинку
+
+  imgPopup.classList.add('popup'); // добавляем класс нашему модальному окну
+
+  workSection.appendChild(imgPopup); // помещаем модалку в нашу секцию картинок
+
+  imgPopup.style.justifyContent = 'center';
+  imgPopup.style.alignItems = 'center'; // чтобы элементы были по центру модалки
+
+  imgPopup.style.display = 'none';
+  imgPopup.appendChild(bigImg);
+  workSection.addEventListener('click', function (e) {
+    e.preventDefault();
+    var target = e.target; // то, куда мы нажали
+
+    if (target && target.classList.contains('preview')) {
+      // проверяем, есть ли в элементе, в который мы кликнули определенный класс
+      imgPopup.style.display = 'flex'; // если правильно нажали, показываю модальное окно
+
+      document.body.style.overflow = 'hidden';
+      var path = target.parentNode.getAttribute('href'); // обращаемся к родителю элемента, куда кликнули и ищем нужный атрибут, вытаскиваем оттуда нужные данные
+
+      bigImg.setAttribute('src', path); // задаем данные атрибуту нашей картинки из полученных данных с родителя элемента, в который кликнули
+
+      bigImg.style.width = '650px';
+    }
+
+    if (target && target.matches('div.popup')) {
+      // проверяем клик на подложку
+      imgPopup.style.display = 'none'; // скрываем модальное окно
+
+      document.body.style.overflow = '';
+    }
+  });
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (images);
+
+/***/ }),
+
 /***/ "./src/js/modules/modalWindow.js":
 /*!***************************************!*\
   !*** ./src/js/modules/modalWindow.js ***!
@@ -18081,6 +18139,7 @@ function modalWindow() {
     var close = document.querySelector(closeModalSelector);
     var windows = document.querySelectorAll('[data-modal]'); // переменная нужна, чтобы получить все модальные окна со страницы
 
+    var scroll = calcScroll();
     btnCall.forEach(function (btn) {
       btn.addEventListener('click', function () {
         // на несколько одинаковых элементов вешаем одну функцию
@@ -18097,6 +18156,8 @@ function modalWindow() {
       modal.classList.add('show');
       modal.classList.remove('hide');
       document.body.style.overflow = 'hidden'; // чтобы скролилось только модальное окно, а не весь сайт
+
+      document.body.style.marginRight = "".concat(scroll, "px"); // передаем нужное кол-во пикселей от скролла для отступа    
     }
 
     function closeModal() {
@@ -18108,6 +18169,7 @@ function modalWindow() {
       modal.classList.add('hide');
       modal.classList.remove('show');
       document.body.style.overflow = '';
+      document.body.style.marginRight = "0px";
     }
 
     close.addEventListener('click', function () {
@@ -18137,6 +18199,23 @@ function modalWindow() {
       document.querySelector(selector).classList.add('show');
       document.body.style.overflow = 'hidden';
     }, time);
+  }
+
+  function calcScroll() {
+    // измеряем кол-во пикселей нашего скролла
+    var div = document.createElement('div'); // создаем элемент на странице, добавляем ему прокрутку, затем из общей ширины вычитаем ширину без прокуртки - получаем текущий размер прокрутки нашего скролла на компьютере
+
+    div.style.width = '50px';
+    div.style.height = '50px';
+    div.style.overflowY = 'scroll'; // делаем скролл по вертикали
+
+    div.style.visibility = 'hidden'; // делаем его невидимым для пользователя
+
+    document.body.appendChild(div);
+    var scrollWidth = div.offsetWidth - div.clientWidth;
+    div.remove(); // удаляем после вычислений элемент
+
+    return scrollWidth;
   }
 
   addClassesForModal('.popup_engineer_btn', '.popup_engineer', '.popup_engineer .popup_close');
@@ -18229,20 +18308,22 @@ function tabs(headerSelector, tabSelector, contentSelector, activeClass) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function timer() {
-  var deadline = '2021-05-21';
-
+function timer(timerSelector, deadline) {
+  // принимает селектор таймера и дедлайн
+  // const deadline = '2021-05-21'
+  // время в js исчисляется в миллисекундах
   function getTimeRemaining(endtime) {
-    var t = Date.parse(endtime) - Date.parse(new Date()); // здесь получим кол-во миллисекунд, разницу, которая осталась до дедлайна
+    var t = Date.parse(endtime) - Date.parse(new Date()); // здесь получим кол-во миллисекунд, разницу, которая осталась до дедлайна, из нашего дедлайна вычитаем текущее время на компьютере
 
     var days = Math.floor(t / (1000 * 60 * 60 * 24)); // находим кол-во дней до дедлайна, округляя число
 
     var hours = Math.floor(t / 1000 * 60 * 60 % 24); // общее кол-во часов делим на 24 часа и получаем остаток , 
     // которого не хватает до полных суток
 
-    var minutes = Math.floor(t / 1000 / 60 % 60); // общее кол-во минут делим на 60 минут и получаем остаток
+    var minutes = Math.floor(t / 1000 / 60 % 60); // общее кол-во минут делим на 60 минут и получаем остаток минут от 0 до 59
 
-    var seconds = Math.floor(t / 1000 % 60);
+    var seconds = Math.floor(t / 1000 % 60); // делим на минуты и получаем остаток в секундах от 0 до 59
+
     return {
       // создаем объект и возвращаем его из функции
       'total': t,
@@ -18252,6 +18333,8 @@ function timer() {
       'seconds': seconds
     };
   }
+
+  ;
 
   function getZero(num) {
     if (num >= 0 && num < 10) {
@@ -18263,16 +18346,19 @@ function timer() {
 
   function setClock(selector, endtime) {
     // принимает селектор и время дедлайна
-    var timer = document.querySelector(selector);
+    var timer = document.querySelector(selector); // вытаскиваем таймер и другие элементы таймера
+
     var days = timer.querySelector('#days');
     var hours = timer.querySelector('#hours');
     var minutes = timer.querySelector('#minutes');
     var seconds = timer.querySelector('#seconds');
-    var timeInterval = setInterval(updateClock, 1000);
+    var timeInterval = setInterval(updateClock, 1000); // будем обновлять таймер каждую секунду
+
     updateClock(); // вызываем первый раз функцию заранее, чтобы не было моргания времени
 
     function updateClock() {
-      var t = getTimeRemaining(endtime);
+      var t = getTimeRemaining(endtime); // получаем нужное время, которое осталось до конца в виде объекта
+
       days.innerHTML = getZero(t.days); // получив объект с разными свойствами обращаемся к каждому свойству объекта поочередно
       // также записывая это свойство в переменную на странице
 
@@ -18281,12 +18367,17 @@ function timer() {
       seconds.innerHTML = getZero(t.seconds);
 
       if (t.total <= 0) {
+        // если все время истекло
+        days.innerHTML = '00';
+        hours.innerHTML = '00';
+        minutes.innerHTML = '00';
+        seconds.innerHTML = '00';
         clearInterval(timeInterval); // если время уже вышло, то остановить таймер
       }
     }
   }
 
-  setClock('.timer1', deadline);
+  setClock(timerSelector, deadline);
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (timer);
